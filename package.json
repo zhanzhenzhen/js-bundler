@@ -1,6 +1,6 @@
 {
     "name": "js-bundler",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "description": "Command line tool for JS bundling.",
     "keywords": ["bundle", "browserify", "js", "javascript", "bundling", "browser"],
     "author": "Zhenzhen Zhan <zhanzhenzhen@hotmail.com>",

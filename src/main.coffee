@@ -2,9 +2,7 @@ esprima = require("esprima")
 resolve = require("resolve")
 fs = require("fs")
 path = require("path")
-args = process.argv[..]
-args.splice(0, 2) # strip "node" and the name of this file
-#========================================
+#===============================================================================
 mods = []
 filePathIndexesInMods = {}
 checkCode = (code, baseDirectory, filePath) ->
@@ -37,60 +35,75 @@ checkCode = (code, baseDirectory, filePath) ->
         else
             Object.keys(node).forEach((m) -> checkTreeNode(node[m]))
     checkTreeNode(parsed)
-#========================================
-file = args[0]
-[code, baseDirectory, filePath] =
-    if file == "-" then [
-        process.stdin.read()
-        path.resolve(".")
-        null
-    ] else [
-        fs.readFileSync(file, {encoding: "utf8"})
-        path.dirname(path.resolve(file))
-        path.resolve(file)
-    ]
-checkCode(code, baseDirectory, filePath)
-#========================================
-modsBodyStr = mods.map((mod) ->
-    """
-        {
-        fun: function(exports, module, require) {
+#===============================================================================
+writeOutput = ->
+    modsBodyStr = mods.map((mod) ->
+        """
+            {
+            fun: function(exports, module, require) {
 
-        #{mod.code}
+            #{mod.code}
 
-        },
-        nameIndexes: #{JSON.stringify(mod.nameIndexes)},
-        result: null
-        }
+            },
+            nameIndexes: #{JSON.stringify(mod.nameIndexes)},
+            result: null
+            }
 
-    """
-).join(",\n")
-# "386389655257694535" is to avoid naming conflict.
-bundleStr = """
-    var mods_386389655257694535 = [
-    #{modsBodyStr}
-    ];
+        """
+    ).join(",\n")
+    # "386389655257694535" is to avoid naming conflict.
+    bundleStr = """
+        var mods_386389655257694535 = [
+        #{modsBodyStr}
+        ];
 
-    (function() {
-        var run = function(index) {
-            var mods = mods_386389655257694535;
-            var mod = mods[index];
-            var theExports = {};
-            var theModule = {exports: theExports};
-            var theRequire = function(name) {
-                var newIndex = mod.nameIndexes[name];
-                if (mods[newIndex].result === null) {
-                    return run(newIndex);
-                } else {
-                    return mods[newIndex].result;
-                }
+        (function() {
+            var run = function(index) {
+                var mods = mods_386389655257694535;
+                var mod = mods[index];
+                var theExports = {};
+                var theModule = {exports: theExports};
+                var theRequire = function(name) {
+                    var newIndex = mod.nameIndexes[name];
+                    if (mods[newIndex].result === null) {
+                        return run(newIndex);
+                    } else {
+                        return mods[newIndex].result;
+                    }
+                };
+                mod.fun.apply(theExports, [theExports, theModule, theRequire]);
+                mod.result = theModule.exports;
+                return mod.result;
             };
-            mod.fun.apply(theExports, [theExports, theModule, theRequire]);
-            mod.result = theModule.exports;
-            return mod.result;
-        };
-        run(0);
-    })();
+            run(0);
+        })();
 
-"""
-process.stdout.write(bundleStr)
+    """
+    process.stdout.write(bundleStr)
+#===============================================================================
+code = baseDirectory = filePath = null
+generate = ->
+    checkCode(code, baseDirectory, filePath)
+    writeOutput()
+#===============================================================================
+args = process.argv[..]
+args.splice(0, 2) # strip "node" and the name of this file
+file = args[0]
+if file == "-"
+    code = ""
+    baseDirectory = path.resolve(".")
+    filePath = null
+    process.stdin.setEncoding("utf8")
+    process.stdin.on("readable", ->
+        chunk = process.stdin.read()
+        if chunk?
+            code += chunk
+    )
+    process.stdin.on("end", ->
+        generate()
+    )
+else
+    code = fs.readFileSync(file, {encoding: "utf8"})
+    filePath = path.resolve(file)
+    baseDirectory = path.dirname(filePath)
+    generate()
