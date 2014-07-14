@@ -2,10 +2,20 @@ esprima = require("esprima")
 resolve = require("resolve")
 fs = require("fs")
 path = require("path")
+cp = require("child_process")
 #===============================================================================
 mods = []
 filePathIndexesInMods = {}
-checkCode = (code, baseDirectory, filePath) ->
+compileCommands = {}
+checkCode = (filePath) ->
+    rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
+    rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
+    baseDirectory = path.dirname(filePath)
+    code =
+        if rawCodeType == "js"
+            rawCode
+        else
+            cp.execSync(compileCommands[rawCodeType], {input: rawCode})
     mod = {}
     mods.push(mod)
     mod.code = code
@@ -22,13 +32,12 @@ checkCode = (code, baseDirectory, filePath) ->
                 node.arguments[0]? and
                 node.arguments[0].type == "Literal"
             requireString = node.arguments[0].value
-            newFilePath = resolve.sync(requireString, {basedir: baseDirectory})
+            newFilePath = resolve.sync(requireString, {
+                basedir: baseDirectory
+                extensions: [".js", ".coffee"]
+            })
             if not filePathIndexesInMods[newFilePath]?
-                checkCode(
-                    fs.readFileSync(newFilePath, {encoding: "utf8"}),
-                    path.dirname(newFilePath),
-                    newFilePath
-                )
+                checkCode(newFilePath)
             mod.nameIndexes[requireString] ?= filePathIndexesInMods[newFilePath]
         if Array.isArray(node)
             node.forEach((m) -> checkTreeNode(m))
@@ -81,29 +90,17 @@ writeOutput = ->
     """
     process.stdout.write(bundleStr)
 #===============================================================================
-code = baseDirectory = filePath = null
-generate = ->
-    checkCode(code, baseDirectory, filePath)
-    writeOutput()
-#===============================================================================
 args = process.argv[..]
 args.splice(0, 2) # strip "node" and the name of this file
-file = args[0]
-if file == "-"
-    code = ""
-    baseDirectory = path.resolve(".")
-    filePath = null
-    process.stdin.setEncoding("utf8")
-    process.stdin.on("readable", ->
-        chunk = process.stdin.read()
-        if chunk?
-            code += chunk
-    )
-    process.stdin.on("end", ->
-        generate()
-    )
-else
-    code = fs.readFileSync(file, {encoding: "utf8"})
-    filePath = path.resolve(file)
-    baseDirectory = path.dirname(filePath)
-    generate()
+file = null
+i = 0
+while i < args.length
+    arg = args[i]
+    if arg.indexOf("-c:") != -1
+        compileCommands[arg.split(":")[1]] = args[i + 1]
+        i += 2
+    else
+        file = arg
+        i++
+checkCode(path.resolve(file))
+writeOutput()
