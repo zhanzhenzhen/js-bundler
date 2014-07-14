@@ -2,20 +2,24 @@ esprima = require("esprima")
 resolve = require("resolve")
 fs = require("fs")
 path = require("path")
-cp = require("child_process")
+cprocess = require("child_process")
+assert = require("assert")
 #===============================================================================
 mods = []
 filePathIndexesInMods = {}
 compileCommands = {}
-checkCode = (filePath) ->
+dummies = []
+checkCode = (filePath, isDummy = false) ->
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
     baseDirectory = path.dirname(filePath)
     code =
-        if rawCodeType == "js"
+        if isDummy
+            ""
+        else if rawCodeType == "js"
             rawCode
         else
-            cp.execSync(compileCommands[rawCodeType], {
+            cprocess.execSync(compileCommands[rawCodeType], {
                 encoding: "utf8"
                 input: rawCode
             })
@@ -23,8 +27,7 @@ checkCode = (filePath) ->
     mods.push(mod)
     mod.code = code
     mod.nameIndexes = {}
-    if filePath?
-        filePathIndexesInMods[filePath] = mods.length - 1
+    filePathIndexesInMods[filePath] = mods.length - 1
     parsed = esprima.parse(code)
     checkTreeNode = (node) ->
         if not (typeof node == "object" and node != null)
@@ -40,7 +43,7 @@ checkCode = (filePath) ->
                 extensions: [".js", ".coffee"]
             })
             if not filePathIndexesInMods[newFilePath]?
-                checkCode(newFilePath)
+                checkCode(newFilePath, requireString in dummies)
             mod.nameIndexes[requireString] ?= filePathIndexesInMods[newFilePath]
         if Array.isArray(node)
             node.forEach((m) -> checkTreeNode(m))
@@ -102,7 +105,12 @@ while i < args.length
     if arg.indexOf("-c:") != -1
         compileCommands[arg.split(":")[1]] = args[i + 1]
         i += 2
+    else if arg == "-d"
+        assert(args[i + 1].search(/^(\/|\.\/|\.\.\/)/) == -1)
+        dummies.push(args[i + 1])
+        i += 2
     else
+        assert(arg[0] != "-")
         file = arg
         i++
 checkCode(path.resolve(file))
