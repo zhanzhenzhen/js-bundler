@@ -15,7 +15,10 @@ checkCode = (filePath) ->
         if rawCodeType == "js"
             rawCode
         else
-            cp.execSync(compileCommands[rawCodeType], {input: rawCode})
+            cp.execSync(compileCommands[rawCodeType], {
+                encoding: "utf8"
+                input: rawCode
+            })
     mod = {}
     mods.push(mod)
     mod.code = code
