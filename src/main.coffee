@@ -65,26 +65,30 @@ writeOutput = ->
 
             },
             nameIndexes: #{JSON.stringify(mod.nameIndexes)},
-            result: null
+            result: initialModResult_386389655257694535
             }
 
         """
     ).join(",\n")
     # "386389655257694535" is to avoid naming conflict.
     bundleStr = """
+        var initialModResult_386389655257694535 = {};
+
         var mods_386389655257694535 = [
         #{modsBodyStr}
         ];
 
         (function() {
+            var initialModResult = initialModResult_386389655257694535;
+            var mods = mods_386389655257694535;
             var run = function(index) {
-                var mods = mods_386389655257694535;
                 var mod = mods[index];
                 var theExports = {};
                 var theModule = {exports: theExports};
                 var theRequire = function(name) {
+                    mod.result = theModule.exports;
                     var newIndex = mod.nameIndexes[name];
-                    if (mods[newIndex].result === null) {
+                    if (mods[newIndex].result === initialModResult) {
                         return run(newIndex);
                     } else {
                         return mods[newIndex].result;
