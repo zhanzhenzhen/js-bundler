@@ -19,10 +19,14 @@ checkCode = (filePath, isDummy = false) ->
         else if rawCodeType == "js"
             rawCode
         else
-            cprocess.execSync(compileCommands[rawCodeType], {
-                encoding: "utf8"
-                input: rawCode
-            })
+            command = compileCommands[rawCodeType]
+            if command?
+                cprocess.execSync(command, {
+                    encoding: "utf8"
+                    input: rawCode
+                })
+            else
+                rawCode
     mod = {}
     mods.push(mod)
     mod.code = code
