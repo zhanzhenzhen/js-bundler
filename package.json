@@ -1,8 +1,8 @@
 {
     "name": "js-bundler",
     "version": "0.2.0",
-    "description": "Command line tool for JS bundling.",
-    "keywords": ["bundle", "browserify", "js", "javascript", "bundling", "browser"],
+    "description": "Command line tool for JavaScript/CoffeeScript bundling.",
+    "keywords": ["bundle", "browserify", "js", "javascript", "bundling", "browser", "coffeescript"],
     "author": "Zhenzhen Zhan <zhanzhenzhen@hotmail.com>",
     "homepage": "https://github.com/zhanzhenzhen/js-bundler",
     "licenses": [{
