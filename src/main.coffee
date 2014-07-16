@@ -55,6 +55,7 @@ checkCode = (filePath, isDummy = false) ->
             Object.keys(node).forEach((m) -> checkTreeNode(node[m]))
     checkTreeNode(parsed)
 #===============================================================================
+# "386389655257694535" is to avoid naming conflicts.
 writeOutput = ->
     modsBodyStr = mods.map((mod) ->
         """
@@ -70,8 +71,9 @@ writeOutput = ->
 
         """
     ).join(",\n")
-    # "386389655257694535" is to avoid naming conflict.
     bundleStr = """
+        // `{}` is to guarantee that any subsequent `mod.result` assignment will make
+        // the variable different from the initial value.
         var initialModResult_386389655257694535 = {};
 
         var mods_386389655257694535 = [
@@ -86,17 +88,15 @@ writeOutput = ->
                 var theExports = {};
                 var theModule = {exports: theExports};
                 var theRequire = function(name) {
-                    mod.result = theModule.exports;
+                    mod.result = theModule.exports; // for preventing infinite loops
                     var newIndex = mod.nameIndexes[name];
                     if (mods[newIndex].result === initialModResult) {
-                        return run(newIndex);
-                    } else {
-                        return mods[newIndex].result;
+                        run(newIndex);
                     }
+                    return mods[newIndex].result;
                 };
                 mod.fun.apply(theExports, [theExports, theModule, theRequire]);
-                mod.result = theModule.exports;
-                return mod.result;
+                mod.result = theModule.exports; // for caching
             };
             run(0);
         })();
