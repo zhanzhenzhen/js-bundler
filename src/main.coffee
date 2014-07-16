@@ -88,7 +88,10 @@ writeOutput = ->
                 var theExports = {};
                 var theModule = {exports: theExports};
                 var theRequire = function(name) {
-                    mod.result = theModule.exports; // for preventing infinite loops
+
+                    // half-way result, for caching & preventing infinite loops
+                    mod.result = theModule.exports;
+
                     var newIndex = mod.nameIndexes[name];
                     if (mods[newIndex].result === initialModResult) {
                         run(newIndex);
