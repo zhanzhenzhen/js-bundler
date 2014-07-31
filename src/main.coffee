@@ -48,9 +48,10 @@ checkCode = (filePath, isDummy = false) ->
                         basedir: baseDirectory
                         extensions: [".js", ".coffee"]
                     })
-                catch
+                catch # when `require` an inexistent module
                     null
-            if newFilePath? and newFilePath.search(/^[a-z][a-z0-9\-]*$/) != -1
+            # when `require` a node core module
+            if newFilePath? and newFilePath.search(/^[A-Za-z][A-Za-z0-9\-_]*$/) != -1
                 newFilePath = null
             if newFilePath?
                 if not filePathIndexesInMods[newFilePath]?
@@ -100,6 +101,9 @@ writeOutput = ->
                     mod.result = theModule.exports;
 
                     var newIndex = mod.nameIndexes[name];
+                    if (newIndex === undefined) {
+                        throw new Error("Cannot find module " + name + ".");
+                    }
                     if (mods[newIndex].result === initialModResult) {
                         run(newIndex);
                     }
