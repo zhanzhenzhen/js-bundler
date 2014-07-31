@@ -102,7 +102,7 @@ writeOutput = ->
 
                     var newIndex = mod.nameIndexes[name];
                     if (newIndex === undefined) {
-                        throw new Error("Cannot find module " + name + ".");
+                        throw new Error("Cannot find module " + JSON.stringify(name) + ".");
                     }
                     if (mods[newIndex].result === initialModResult) {
                         run(newIndex);
