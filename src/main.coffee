@@ -42,13 +42,20 @@ checkCode = (filePath, isDummy = false) ->
                 node.arguments[0]? and
                 node.arguments[0].type == "Literal"
             requireString = node.arguments[0].value
-            newFilePath = resolve.sync(requireString, {
-                basedir: baseDirectory
-                extensions: [".js", ".coffee"]
-            })
-            if not filePathIndexesInMods[newFilePath]?
-                checkCode(newFilePath, requireString in dummies)
-            mod.nameIndexes[requireString] ?= filePathIndexesInMods[newFilePath]
+            newFilePath =
+                try
+                    resolve.sync(requireString, {
+                        basedir: baseDirectory
+                        extensions: [".js", ".coffee"]
+                    })
+                catch
+                    null
+            if newFilePath.search(/^[a-z][a-z0-9\-]*$/) != -1
+                newFilePath = null
+            if newFilePath?
+                if not filePathIndexesInMods[newFilePath]?
+                    checkCode(newFilePath, requireString in dummies)
+                mod.nameIndexes[requireString] ?= filePathIndexesInMods[newFilePath]
         if Array.isArray(node)
             node.forEach((m) -> checkTreeNode(m))
         else
