@@ -50,7 +50,7 @@ checkCode = (filePath, isDummy = false) ->
                     })
                 catch
                     null
-            if newFilePath.search(/^[a-z][a-z0-9\-]*$/) != -1
+            if newFilePath? and newFilePath.search(/^[a-z][a-z0-9\-]*$/) != -1
                 newFilePath = null
             if newFilePath?
                 if not filePathIndexesInMods[newFilePath]?
