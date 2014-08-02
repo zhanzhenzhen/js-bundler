@@ -50,4 +50,4 @@ if (environment === "server") {
 }
 ```
 
-Their runtime behaviors are similar, except that a dummy is treated as a module so `require` it doesn't throw an error.
+Their runtime behaviors are similar, except that a dummy is treated as a module so "requiring" it doesn't throw an error.
