@@ -1,6 +1,8 @@
 # js-bundler
 
-Bundles the specified file and all "required" files into one. Similar to browserify, but no node built-in module shims. So it's lightweight.
+Bundles the specified file and all "required" files into one. Similar to browserify, but no Node built-in module shims. So it's lightweight.
+
+Because it has no shims, please only bundle neutral or browser-side packages that don't depend on Node built-in modules.
 
 Requirements:
 
@@ -40,10 +42,12 @@ bundle -c:coffee 'coffee -bcs' -d 'coffee-script/register' example.js
 
 `-d` means "dummy". It will bundle an empty module rather than the real "coffee-script/register" module.
 
-In your code you can prevent a module from being bundled (For instance, the part of the code will only be run at server side). Simply add a `module.` prefix before `require`:
+To prevent a module from being bundled (for instance, it will never be run on browser), either use `-d` in the command or add a `module.` prefix before `require` in the code:
 
 ```javascript
-if (environmentType === "node") {
-    var domain = module.require("domain").create();
+if (environment === "server") {
+    var abc = module.require("./abc");
 }
 ```
+
+They are similar, except that a dummy is a module so `require` it doesn't throw an error.
