@@ -2,16 +2,16 @@
 
 Bundles the specified file and all "required" files into one. Similar to browserify, but no Node built-in module shims. So it's lightweight.
 
-Because it has no shims, please only bundle neutral or browser-side packages that don't depend on Node built-in modules.
+Because it doesn't provide shims, please only bundle "browser" or "neutral" packages that don't depend on Node built-in modules.
 
-Requirements:
+Requirement:
 
 Node 0.11.13 or higher.
 
 # Synopsis
 
 ```
-bundle [-c:<type> <command>]... [-d <require-string>]... <file>
+bundle [-c:<file-type> <command>]... [-d <require-string>]... <file>
 ```
 
 # Examples
@@ -50,4 +50,4 @@ if (environment === "server") {
 }
 ```
 
-They are similar, except that a dummy is a module so `require` it doesn't throw an error.
+Their runtime behaviors are similar, except that a dummy is treated as a module so `require` it doesn't throw an error.
