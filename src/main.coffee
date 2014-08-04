@@ -21,7 +21,9 @@ checkCode = (filePath, isDummy = false) ->
         else if rawCodeType == "json"
             """
                 module.exports =
+
                 #{rawCode}
+
                 ;
 
             """
