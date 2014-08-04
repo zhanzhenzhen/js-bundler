@@ -55,7 +55,7 @@ checkCode = (filePath, isDummy = false) ->
                 try
                     resolve.sync(requireString, {
                         basedir: baseDirectory
-                        extensions: [".js", ".coffee"]
+                        extensions: [".js", ".json", ".coffee"]
                     })
                 catch # when `require` an inexistent module
                     null
