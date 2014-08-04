@@ -4,10 +4,6 @@ Bundles the specified file and all "required" files into one. Similar to browser
 
 Because it doesn't provide shims, please only bundle "browser" or "neutral" packages that don't depend on Node built-in modules.
 
-Requirement:
-
-Node 0.11.13 or higher.
-
 # Synopsis
 
 ```
@@ -33,6 +29,8 @@ To bundle CoffeeScript:
 ```bash
 bundle -c:coffee 'coffee -bcs' example.coffee
 ```
+
+(Note: `-c` is for Node 0.11.13 or higher.)
 
 To bundle a JavaScript file that "requires" CoffeeScript files, that is, the .js file has `require("coffee-script/register")`:
 

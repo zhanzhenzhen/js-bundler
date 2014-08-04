@@ -18,6 +18,13 @@ checkCode = (filePath, isDummy = false) ->
             ""
         else if rawCodeType == "js"
             rawCode
+        else if rawCodeType == "json"
+            """
+                module.exports =
+                #{rawCode}
+                ;
+
+            """
         else
             command = compileCommands[rawCodeType]
             if command?
