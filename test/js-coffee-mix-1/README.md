@@ -10,4 +10,5 @@ sss
 rrr
 another-a
 qqq
+{ my: 3 }
 ```
