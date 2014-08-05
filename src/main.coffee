@@ -89,39 +89,45 @@ writeOutput = ->
         """
     ).join(",\n")
     bundleStr = """
-        // `{}` is to guarantee that any subsequent `mod.result` assignment will make
-        // the variable different from the initial value.
-        var initialModResult_386389655257694535 = {};
-
-        var mods_386389655257694535 = [
-        #{modsBodyStr}
-        ];
-
+        // This wrapper is to prevent global variable assignments. It's not to
+        // prevent naming conflicts ("386389655257694535" already does), but to
+        // work better with minification tools.
         (function() {
-            var initialModResult = initialModResult_386389655257694535;
-            var mods = mods_386389655257694535;
-            var run = function(index) {
-                var mod = mods[index];
-                var theExports = {};
-                var theModule = {exports: theExports};
-                var theRequire = function(name) {
+            // `{}` is to guarantee that any subsequent `mod.result` assignment will make
+            // the variable different from the initial value.
+            var initialModResult_386389655257694535 = {};
 
-                    // half-way result, for caching & preventing infinite loops
-                    mod.result = theModule.exports;
+            var mods_386389655257694535 = [
+            #{modsBodyStr}
+            ];
 
-                    var newIndex = mod.nameIndexes[name];
-                    if (newIndex === undefined) {
-                        throw new Error("Cannot find module " + JSON.stringify(name) + ".");
-                    }
-                    if (mods[newIndex].result === initialModResult) {
-                        run(newIndex);
-                    }
-                    return mods[newIndex].result;
+            // This wrapper is to prevent naming conflicts.
+            (function() {
+                var initialModResult = initialModResult_386389655257694535;
+                var mods = mods_386389655257694535;
+                var run = function(index) {
+                    var mod = mods[index];
+                    var theExports = {};
+                    var theModule = {exports: theExports};
+                    var theRequire = function(name) {
+
+                        // half-way result, for caching & preventing infinite loops
+                        mod.result = theModule.exports;
+
+                        var newIndex = mod.nameIndexes[name];
+                        if (newIndex === undefined) {
+                            throw new Error("Cannot find module " + JSON.stringify(name) + ".");
+                        }
+                        if (mods[newIndex].result === initialModResult) {
+                            run(newIndex);
+                        }
+                        return mods[newIndex].result;
+                    };
+                    mod.fun.apply(theExports, [theExports, theModule, theRequire]);
+                    mod.result = theModule.exports; // for caching
                 };
-                mod.fun.apply(theExports, [theExports, theModule, theRequire]);
-                mod.result = theModule.exports; // for caching
-            };
-            run(0);
+                run(0);
+            })();
         })();
 
     """
