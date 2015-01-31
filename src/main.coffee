@@ -151,6 +151,8 @@ writeOutput = ->
             lineCount = if mod.code[mod.code.length - 1] == "\n" then lfCount else lfCount + 1
             offset += offsetModStart
             for i in [1..lineCount]
+                # The "source-map" package is very strange:
+                # `line` starts with 1, but `column` starts with 0.
                 mapGen.addMapping(
                     generated:
                         line: offset + i
