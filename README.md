@@ -7,7 +7,7 @@ Because it doesn't provide shims, please only bundle "browser" or "neutral" pack
 # Synopsis
 
 ```
-bundle [-c:<file-type> <command>]... [-d <require-string>]... <file>
+bundle [-c:<file-type> <command>]... [-d <require-string>]... [-m] <file>
 ```
 
 # Examples
@@ -48,4 +48,10 @@ if (environment === "server") {
 }
 ```
 
-Their runtime behaviors are similar, except that a dummy is treated as a module so "requiring" it doesn't throw an error.
+Their runtime behaviors are similar, except that a dummy is treated as a module so "require" doesn't throw an error, but if you use `module.` prefix and your condition doesn't prevent the inner code running, then `module.require` will throw an error.
+
+To add a source map inline to the end of the bundle:
+
+```bash
+bundle -m example.js
+```
