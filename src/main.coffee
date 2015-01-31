@@ -10,6 +10,7 @@ mods = []
 filePathIndexesInMods = {}
 compileCommands = {}
 dummies = []
+informative = false
 checkCode = (filePath, isDummy = false) ->
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
@@ -77,13 +78,14 @@ checkCode = (filePath, isDummy = false) ->
 # "386389655257694535" is to avoid naming conflicts.
 writeOutput = ->
     modsBodyStr = mods.map((mod) ->
+        info = if informative then path.relative(process.cwd(), mod.rawFilePath) + " " else ""
         """
             {
             fun: function(exports, module, require) {
 
 
             // *****
-            // ***** #{path.relative(process.cwd(), mod.rawFilePath)} file-386389655257694535
+            // ***** #{info}file-386389655257694535
             // ***** (((
 
             #{mod.code}
@@ -157,6 +159,9 @@ while i < args.length
         assert(args[i + 1].search(/^(\/|\.\/|\.\.\/)/) == -1)
         dummies.push(args[i + 1])
         i += 2
+    else if arg == "-i"
+        informative = true
+        i++
     else if arg == "-v"
         console.log(packageInfo.version)
         doesBundle = false

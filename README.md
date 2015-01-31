@@ -7,7 +7,7 @@ Because it doesn't provide shims, please only bundle "browser" or "neutral" pack
 # Synopsis
 
 ```
-bundle [-c:<file-type> <command>]... [-d <require-string>]... <file>
+bundle [-c:<file-type> <command>]... [-d <require-string>]... [-i] <file>
 bundle -v
 ```
 
@@ -50,6 +50,14 @@ if (environment === "server") {
 ```
 
 Their runtime behaviors are similar, except that a dummy is treated as a module so "require" doesn't throw an error, but if you use `module.` prefix and your condition doesn't prevent the inner code running, then `module.require` will throw an error.
+
+To add raw file's relative path (to the working directory) to the output:
+
+```bash
+bundle -i example.js
+```
+
+This is useful in debugging. But for security, we recommend you only use this option in testing, or use some tools to remove comments in the public downloadable bundle file, because this option makes the raw file's relative path disclosed.
 
 To show the version:
 
