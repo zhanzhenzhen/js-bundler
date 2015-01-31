@@ -41,6 +41,7 @@ checkCode = (filePath, isDummy = false) ->
     mods.push(mod)
     mod.code = code
     mod.nameIndexes = {}
+    mod.rawFilePath = filePath
     filePathIndexesInMods[filePath] = mods.length - 1
     parsed = esprima.parse(code)
     checkTreeNode = (node) ->
@@ -80,7 +81,15 @@ writeOutput = ->
             {
             fun: function(exports, module, require) {
 
+
+            // *****
+            // ***** #{path.relative(process.cwd(), mod.rawFilePath)} file-386389655257694535
+            // ***** (((
+
             #{mod.code}
+
+            // ***** ))) file end
+
 
             },
             nameIndexes: #{JSON.stringify(mod.nameIndexes)},
