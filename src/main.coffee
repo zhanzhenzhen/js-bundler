@@ -1,6 +1,5 @@
 esprima = require("esprima")
 resolve = require("resolve")
-sourceMap = require("source-map")
 fs = require("fs")
 path = require("path")
 cprocess = require("child_process")
@@ -10,7 +9,6 @@ mods = []
 filePathIndexesInMods = {}
 compileCommands = {}
 dummies = []
-sourceMapEnabled = false
 checkCode = (filePath, isDummy = false) ->
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
@@ -23,11 +21,8 @@ checkCode = (filePath, isDummy = false) ->
         else if rawCodeType == "json"
             """
                 module.exports =
-
                 #{rawCode}
-
                 ;
-
             """
         else
             command = compileCommands[rawCodeType]
@@ -42,7 +37,6 @@ checkCode = (filePath, isDummy = false) ->
     mods.push(mod)
     mod.code = code
     mod.nameIndexes = {}
-    mod.rawFilename = path.basename(filePath)
     filePathIndexesInMods[filePath] = mods.length - 1
     parsed = esprima.parse(code)
     checkTreeNode = (node) ->
@@ -76,22 +70,16 @@ checkCode = (filePath, isDummy = false) ->
     checkTreeNode(parsed)
 #===============================================================================
 # "386389655257694535" is to avoid naming conflicts.
-# Modifying string constants inside it should be very careful, because
-# after that we MUST also modify the `offsetStart`, `offsetModStart` and
-# `offsetModEnd` constants to match them.
 writeOutput = ->
     modsBodyStr = mods.map((mod) ->
         """
             {
             fun: function(exports, module, require) {
-
             #{mod.code}
-
             },
             nameIndexes: #{JSON.stringify(mod.nameIndexes)},
             result: initialModResult_386389655257694535
             }
-
         """
     ).join(",\n")
     bundleStr = """
@@ -102,11 +90,9 @@ writeOutput = ->
             // `{}` is to guarantee that any subsequent `mod.result` assignment will make
             // the variable different from the initial value.
             var initialModResult_386389655257694535 = {};
-
             var mods_386389655257694535 = [
             #{modsBodyStr}
             ];
-
             // This wrapper is to prevent naming conflicts.
             (function() {
                 var initialModResult = initialModResult_386389655257694535;
@@ -116,10 +102,8 @@ writeOutput = ->
                     var theExports = {};
                     var theModule = {exports: theExports};
                     var theRequire = function(name) {
-
                         // half-way result, for caching & preventing infinite loops
                         mod.result = theModule.exports;
-
                         var newIndex = mod.nameIndexes[name];
                         if (newIndex === undefined) {
                             throw new Error("Cannot find module " + JSON.stringify(name) + ".");
@@ -135,37 +119,7 @@ writeOutput = ->
                 run(0);
             })();
         })();
-
     """
-    if sourceMapEnabled then do ->
-        offsetStart = 9 # lines before #{modsBodyStr} in the whole bundle string
-        offsetModStart = 3 # lines before #{mod.code} in a mod string
-        offsetModEnd = 5 + 1 # lines after #{mod.code} in a mod string, plus a line of a comma
-        mapGen = new sourceMap.SourceMapGenerator()
-        offset = offsetStart
-        mods.forEach((mod) ->
-            lfCount = 0
-            for i in [0...mod.code.length]
-                if mod.code[i] == "\n"
-                    lfCount++
-            lineCount = if mod.code[mod.code.length - 1] == "\n" then lfCount else lfCount + 1
-            offset += offsetModStart
-            for i in [1..lineCount]
-                # The "source-map" package is very strange:
-                # `line` starts with 1, but `column` starts with 0.
-                mapGen.addMapping(
-                    generated:
-                        line: offset + i
-                        column: null
-                    source: mod.rawFilename
-                    original:
-                        line: i
-                        column: null
-                )
-            offset += lfCount + offsetModEnd
-        )
-        bundleStr += "\n" + "//# sourceMappingURL=data:application/json;base64," +
-                new Buffer(mapGen.toString()).toString("base64") + "\n"
     process.stdout.write(bundleStr)
 #===============================================================================
 args = process.argv[..]
@@ -181,9 +135,6 @@ while i < args.length
         assert(args[i + 1].search(/^(\/|\.\/|\.\.\/)/) == -1)
         dummies.push(args[i + 1])
         i += 2
-    else if arg == "-m"
-        sourceMapEnabled = true
-        i++
     else
         assert(arg[0] != "-")
         file = arg
