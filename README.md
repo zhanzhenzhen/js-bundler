@@ -1,6 +1,6 @@
 # js-bundler
 
-Bundles the specified file and all "required" files into one. Similar to browserify, but no Node built-in module shims. So it's lightweight.
+Bundles the specified file and all "required" files into one. Similar to browserify, but no Node built-in module shims, no source mapping. So it's lightweight.
 
 Because it doesn't provide shims, please only bundle "browser" or "neutral" packages that don't depend on Node built-in modules.
 
