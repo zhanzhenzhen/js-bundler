@@ -4,6 +4,7 @@ fs = require("fs")
 path = require("path")
 cprocess = require("child_process")
 assert = require("assert")
+packageInfo = require("../package.json")
 #===============================================================================
 mods = []
 filePathIndexesInMods = {}
@@ -125,6 +126,7 @@ writeOutput = ->
 args = process.argv[..]
 args.splice(0, 2) # strip "node" and the name of this file
 file = null
+doesBundle = true
 i = 0
 while i < args.length
     arg = args[i]
@@ -135,9 +137,15 @@ while i < args.length
         assert(args[i + 1].search(/^(\/|\.\/|\.\.\/)/) == -1)
         dummies.push(args[i + 1])
         i += 2
+    else if arg == "-v"
+        console.log(packageInfo.version)
+        doesBundle = false
+        i++
     else
         assert(arg[0] != "-")
         file = arg
         i++
-checkCode(path.resolve(file))
-writeOutput()
+if (doesBundle)
+    assert(file?, "Must specify a file.")
+    checkCode(path.resolve(file))
+    writeOutput()
