@@ -22,8 +22,11 @@ checkCode = (filePath, isDummy = false) ->
         else if rawCodeType == "json"
             """
                 module.exports =
+
                 #{rawCode}
+
                 ;
+
             """
         else
             command = compileCommands[rawCodeType]
@@ -76,11 +79,14 @@ writeOutput = ->
         """
             {
             fun: function(exports, module, require) {
+
             #{mod.code}
+
             },
             nameIndexes: #{JSON.stringify(mod.nameIndexes)},
             result: initialModResult_386389655257694535
             }
+
         """
     ).join(",\n")
     bundleStr = """
@@ -91,9 +97,11 @@ writeOutput = ->
             // `{}` is to guarantee that any subsequent `mod.result` assignment will make
             // the variable different from the initial value.
             var initialModResult_386389655257694535 = {};
+
             var mods_386389655257694535 = [
             #{modsBodyStr}
             ];
+
             // This wrapper is to prevent naming conflicts.
             (function() {
                 var initialModResult = initialModResult_386389655257694535;
@@ -103,8 +111,10 @@ writeOutput = ->
                     var theExports = {};
                     var theModule = {exports: theExports};
                     var theRequire = function(name) {
+
                         // half-way result, for caching & preventing infinite loops
                         mod.result = theModule.exports;
+
                         var newIndex = mod.nameIndexes[name];
                         if (newIndex === undefined) {
                             throw new Error("Cannot find module " + JSON.stringify(name) + ".");
@@ -120,6 +130,7 @@ writeOutput = ->
                 run(0);
             })();
         })();
+
     """
     process.stdout.write(bundleStr)
 #===============================================================================
