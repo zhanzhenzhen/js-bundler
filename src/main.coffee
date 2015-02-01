@@ -38,6 +38,8 @@ checkCode = (filePath, isDummy = false) ->
                 })
             else
                 rawCode
+    if code[code.length - 1] != "\n"
+        code += "\n"
     mod = {}
     mods.push(mod)
     mod.code = code
@@ -80,7 +82,7 @@ writeOutput = ->
     modsBodyStr = mods.map((mod) ->
         info = if informative then path.relative(process.cwd(), mod.rawFilePath) + " " else ""
         """
-            {
+            {\
             fun: function(exports, module, require) {
 
 
@@ -89,17 +91,15 @@ writeOutput = ->
             // ***** (((
 
             #{mod.code}
-
             // ***** ))) file end
 
 
-            },
-            nameIndexes: #{JSON.stringify(mod.nameIndexes)},
-            result: initialModResult_386389655257694535
+            }, \
+            nameIndexes: #{JSON.stringify(mod.nameIndexes)}, \
+            result: initialModResult_386389655257694535\
             }
-
         """
-    ).join(",\n")
+    ).join(", ")
     bundleStr = """
         // This wrapper is to prevent global variable assignments. It's not to
         // prevent naming conflicts ("386389655257694535" already does), but to
