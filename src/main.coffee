@@ -77,7 +77,7 @@ checkCode = (filePath, isDummy = false) ->
             Object.keys(node).forEach((m) -> checkTreeNode(node[m]))
     checkTreeNode(parsed)
 #===============================================================================
-# "386389655257694535" is to avoid naming conflicts.
+# "674497323404793172" is to avoid naming conflicts.
 writeOutput = ->
     modsBodyStr = mods.map((mod) ->
         info = if informative then path.relative(process.cwd(), mod.rawFilePath) + " " else ""
@@ -87,7 +87,7 @@ writeOutput = ->
 
 
             // *****
-            // ***** #{info}file-386389655257694535
+            // ***** #{info}file-674497323404793172
             // ***** (((
 
             #{mod.code}
@@ -96,27 +96,27 @@ writeOutput = ->
 
             }, \
             nameIndexes: #{JSON.stringify(mod.nameIndexes)}, \
-            result: initialModResult_386389655257694535\
+            result: initialModResult_674497323404793172\
             }
         """
     ).join(", ")
     bundleStr = """
         // This wrapper is to prevent global variable assignments. It's not to
-        // prevent naming conflicts ("386389655257694535" already does), but to
+        // prevent naming conflicts ("674497323404793172" already does), but to
         // work better with minification tools.
         (function() {
             // `{}` is to guarantee that any subsequent `mod.result` assignment will make
             // the variable different from the initial value.
-            var initialModResult_386389655257694535 = {};
+            var initialModResult_674497323404793172 = {};
 
-            var mods_386389655257694535 = [
+            var mods_674497323404793172 = [
             #{modsBodyStr}
             ];
 
             // This wrapper is to prevent naming conflicts.
             (function() {
-                var initialModResult = initialModResult_386389655257694535;
-                var mods = mods_386389655257694535;
+                var initialModResult = initialModResult_674497323404793172;
+                var mods = mods_674497323404793172;
                 var run = function(index) {
                     var mod = mods[index];
                     var theExports = {};
