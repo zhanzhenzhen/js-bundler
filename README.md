@@ -51,13 +51,13 @@ if (environment === "server") {
 
 Their runtime behaviors are similar, except that a dummy is treated as a module so "require" doesn't throw an error, but if you use `module.` prefix and your condition doesn't prevent the inner code running, then `module.require` will throw an error.
 
-To add raw file's relative path (to the working directory) to the output:
+To add informative data (i.e. raw file's relative path to the working directory) to the output:
 
 ```bash
 bundle -i example.js
 ```
 
-This is useful in debugging. But for security, we recommend you only use this option in testing, or use some tools to remove comments in the public downloadable bundle file, because this option makes the raw file's relative path disclosed.
+This is useful in debugging. But for security, we recommend you use this option only for testing, or use some tool to remove comments in its downloadable version, because this option discloses the relative paths.
 
 To show the version:
 
