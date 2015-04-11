@@ -1,6 +1,6 @@
 {
     "name": "js-bundler",
-    "version": "0.6.0",
+    "version": "1.0.0-alpha",
     "description": "Command line tool for JavaScript/CoffeeScript bundling.",
     "keywords": ["bundle", "browserify", "js", "javascript", "bundling", "browser", "coffeescript"],
     "author": "Zhenzhen Zhan <zhanzhenzhen@hotmail.com>",
@@ -11,14 +11,15 @@
         "url": "https://github.com/zhanzhenzhen/js-bundler.git"
     },
     "dependencies": {
-        "coffee-script": "1.7.1",
-        "esprima": "1.2.2",
-        "resolve": "0.7.1"
+        "coffee-script": "1.9.1",
+        "esprima": "2.1.0",
+        "resolve": "1.1.6"
     },
     "engines": {
-        "node": ">=0.11.13"
+        "node": ">=0.12.0"
     },
     "bin": {
         "bundle": "./bin/bundle"
-    }
+    },
+    "preferGlobal": true
 }
