@@ -46,7 +46,11 @@ checkCode = (filePath, isDummy = false) ->
     mod.nameIndexes = {}
     mod.rawFilePath = filePath
     filePathIndexesInMods[filePath] = mods.length - 1
-    parsed = esprima.parse(code)
+    parsed = esprima.parse("""
+        (function(exports, module, require) {
+        #{code}
+        })();
+    """, {tolerant: true})
     checkTreeNode = (node) ->
         if not (typeof node == "object" and node != null)
             return
