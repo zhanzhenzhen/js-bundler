@@ -47,17 +47,21 @@ checkCode = (filePath, isDummy = false) ->
     mod.rawFilePath = filePath
     filePathIndexesInMods[filePath] = mods.length - 1
 
-    # The function wrapper is just to prevent parsing error. It is temporary and won't be kept
+    # The function wrapper is just to prevent some parsing error. It is temporary and won't be kept
     # in the output.
     # If the wrapper is missing, the outermost `return` in code (if any) will be treated
-    # as illegal while parsing.
+    # as illegal so will cause parsing error.
     # An alternative way is to use the `tolerant` option, but I think `tolerant` is not better
     # than this.
-    parsed = esprima.parse("""
-        (function(exports, module, require) {
-        #{code}
-        })();
-    """)
+    parsed =
+        try
+            esprima.parse("""
+                (function(exports, module, require) {
+                #{code}
+                })();
+            """)
+        catch
+            throw new Error("Syntax error in \"#{filePath}\".")
 
     checkTreeNode = (node) ->
         if not (typeof node == "object" and node != null)
