@@ -5,7 +5,7 @@ path = require("path")
 cprocess = require("child_process")
 assert = require("assert")
 packageInfo = require("../package.json")
-#===============================================================================
+
 mods = []
 filePathIndexesInMods = {}
 compileCommands = {}
@@ -46,11 +46,19 @@ checkCode = (filePath, isDummy = false) ->
     mod.nameIndexes = {}
     mod.rawFilePath = filePath
     filePathIndexesInMods[filePath] = mods.length - 1
+
+    # The function wrapper is just to prevent parsing error. It is temporary and won't be kept
+    # in the output.
+    # If the wrapper is missing, the outermost `return` in code (if any) will be treated
+    # as illegal while parsing.
+    # An alternative way is to use the `tolerant` option, but I think `tolerant` is not better
+    # than this.
     parsed = esprima.parse("""
         (function(exports, module, require) {
         #{code}
         })();
-    """, {tolerant: true})
+    """)
+
     checkTreeNode = (node) ->
         if not (typeof node == "object" and node != null)
             return
@@ -68,9 +76,11 @@ checkCode = (filePath, isDummy = false) ->
                     })
                 catch # when `require` an inexistent module
                     null
+
             # when `require` a node core module
             if newFilePath? and newFilePath.search(/^[A-Za-z][A-Za-z0-9\-_]*$/) != -1
                 newFilePath = null
+
             if newFilePath?
                 if not filePathIndexesInMods[newFilePath]?
                     checkCode(newFilePath, requireString in dummies)
@@ -80,7 +90,7 @@ checkCode = (filePath, isDummy = false) ->
         else
             Object.keys(node).forEach((m) -> checkTreeNode(node[m]))
     checkTreeNode(parsed)
-#===============================================================================
+
 # "674497323404793172" is to avoid naming conflicts.
 writeOutput = ->
     modsBodyStr = mods.map((mod) ->
@@ -148,7 +158,7 @@ writeOutput = ->
 
     """
     process.stdout.write(bundleStr)
-#===============================================================================
+
 args = process.argv[..]
 args.splice(0, 2) # strip "node" and the name of this file
 file = null
