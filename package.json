@@ -11,8 +11,8 @@
         "url": "https://github.com/zhanzhenzhen/js-bundler.git"
     },
     "dependencies": {
-        "coffee-script": "1.9.1",
-        "esprima": "2.1.0",
+        "coffee-script": "1.9.3",
+        "esprima": "2.4.1",
         "browser-resolve": "1.9.0"
     },
     "engines": {
