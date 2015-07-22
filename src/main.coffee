@@ -1,5 +1,9 @@
 esprima = require("esprima")
+
+# All (or nearly all) options in "resolve" package are valid
+# in package "browser-resolve", though some are missing in browser-resolve's readme.
 resolve = require("browser-resolve")
+
 fs = require("fs")
 path = require("path")
 cprocess = require("child_process")
@@ -180,12 +184,12 @@ while i < args.length
     else if arg == "-i"
         informative = true
         i++
-    else if arg == "-v"
+    else if arg in ["--version", "-v"]
         console.log(packageInfo.version)
         doesBundle = false
         i++
     else
-        assert(arg[0] != "-")
+        assert(arg[0] != "-", "Invalid argument.")
         file = arg
         i++
 if (doesBundle)
