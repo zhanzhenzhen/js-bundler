@@ -22,8 +22,5 @@
     "bin": {
         "bundle": "./bin/bundle"
     },
-    "browser": {
-        "./test/cache-1/a.js": "./test/cache-1/b.js"
-    }
     "preferGlobal": true
 }
