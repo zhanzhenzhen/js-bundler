@@ -86,6 +86,6 @@ console.log("done");
 
 # Compatibility
 
-This package conforms to browser field specification:
+This package implements "browser field" specification:
 
 https://gist.github.com/defunctzombie/4339901
