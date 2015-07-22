@@ -1,5 +1,5 @@
 esprima = require("esprima")
-resolve = require("resolve")
+resolve = require("browser-resolve")
 fs = require("fs")
 path = require("path")
 cprocess = require("child_process")

@@ -8,7 +8,7 @@ Because it doesn't provide shims, please only bundle "browser" or "neutral" pack
 
 ```
 bundle [-c:<file-type> <command>]... [-d <require-string>]... [-i] <file>
-bundle -v
+bundle (-v | --version)
 ```
 
 # Examples
@@ -59,7 +59,7 @@ bundle -i example.js
 
 This is useful in debugging. But for security, we recommend you use this option only for testing, or use a minifier to remove JavaScript comments in its downloadable version, because this option discloses the relative paths.
 
-To show the version:
+To print the version:
 
 ```bash
 bundle -v
@@ -83,3 +83,9 @@ console.log("done");
 
 // ***** ))) file end
 ```
+
+# Compatibility
+
+This package conforms to browser field specification:
+
+https://gist.github.com/defunctzombie/4339901
