@@ -1,4 +1,4 @@
-# 2015-07-22 v1.1.0
+# 2015-07-23 v1.1.0
 
 Now supports package.json browser field.
 

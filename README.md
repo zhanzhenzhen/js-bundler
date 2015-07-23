@@ -43,7 +43,7 @@ bundle -c:coffee 'coffee -bcs' -d 'coffee-script/register' example.js
 
 Sometimes you want to prevent something from being bundled (for instance, it will never be run on browser). There are 3 ways to do that: dummy, the browser field, or a `module.` prefix.
 
-The browser field specification:
+Browser field specification:
 
 https://gist.github.com/defunctzombie/4339901
 
@@ -55,7 +55,7 @@ if (environment === "server") {
 }
 ```
 
-Note that dummies applies only to require strings, and only to external package modules. Another difference is that a dummy is treated as a module so "require" doesn't throw an error, but if you use `module.` prefix and your condition doesn't prevent the inner code running, then `module.require` will throw an error.
+Note that dummies apply only to require strings, and only to external package modules. Another difference is that a dummy is treated as a module so "require" doesn't throw an error, but if you use `module.` prefix and your `if` condition doesn't prevent the inner code running, then `module.require` will throw an error.
 
 To add informative data (i.e. raw file's relative path to the working directory) to the output:
 
