@@ -16,6 +16,7 @@ compileCommands = {}
 dummies = []
 informative = false
 checkCode = (filePath, isDummy = false) ->
+    assert(filePath.indexOf("\"") == -1, "File path can't contain `\"`.")
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
     baseDirectory = path.dirname(filePath)
@@ -36,9 +37,12 @@ checkCode = (filePath, isDummy = false) ->
         else
             command = compileCommands[rawCodeType]
             if command?
-                cprocess.execSync(command, {
+                # To workaround a (maybe) Node.js's bug. The bug is: If you don't
+                # use "cat" but instead using the `input` property, then some Chinese
+                # characters (very rare) will be garbled.
+                # TODO: But this workaround is not good, for it's not Windows compatible.
+                cprocess.execSync("cat \"" + filePath + "\" | " + command, {
                     encoding: "utf8"
-                    input: rawCode
                 })
             else
                 rawCode
