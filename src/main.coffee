@@ -37,12 +37,9 @@ checkCode = (filePath, isDummy = false) ->
         else
             command = compileCommands[rawCodeType]
             if command?
-                # To workaround a (maybe) Node.js's bug. The bug is: If you don't
-                # use "cat" but instead using the `input` property, then some Chinese
-                # characters (very rare) will be garbled.
-                # TODO: But this workaround is not good, for it's not Windows compatible.
                 cprocess.execSync("cat \"" + filePath + "\" | " + command, {
                     encoding: "utf8"
+                    input: rawCode
                 })
             else
                 rawCode
