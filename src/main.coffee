@@ -37,7 +37,7 @@ checkCode = (filePath, isDummy = false) ->
         else
             command = compileCommands[rawCodeType]
             if command?
-                cprocess.execSync("cat \"" + filePath + "\" | " + command, {
+                cprocess.execSync(command, {
                     encoding: "utf8"
                     input: rawCode
                 })
