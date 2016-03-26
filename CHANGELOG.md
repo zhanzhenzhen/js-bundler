@@ -1,3 +1,11 @@
+# 2016-03-26 v1.1.2
+
+Remove the workaround so that it has no side-effects on Windows. CoffeeScript now fixed that bug in their master branch.
+
+# 2015-12-24 v1.1.1
+
+Workaround for a bug in the CoffeeScript compiler (but this fix has side-effects on Windows).
+
 # 2015-07-23 v1.1.0
 
 Now supports package.json browser field.
