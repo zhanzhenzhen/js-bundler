@@ -31,20 +31,20 @@ checkCode = (filePath, isDummy = false) ->
     negations.forEach (m) ->
         if m[1] == ""
             if m[3] == ""
-                assert(relativeFilePath != m[2], "NV: Negation violated.")
+                assert(relativeFilePath != m[2], "ERR_NV: Negation violated.")
             else
-                assert(not relativeFilePath.startsWith(m[2]), "NV: Negation violated.")
+                assert(not relativeFilePath.startsWith(m[2]), "ERR_NV: Negation violated.")
         else
             if m[3] == ""
                 assert(not (
                     relativeFilePath.endsWith("/" + m[2]) or
                     relativeFilePath == m[2]
-                ), "NV: Negation violated.")
+                ), "ERR_NV: Negation violated.")
             else
                 assert(not (
                     relativeFilePath.includes("/" + m[2]) or
                     relativeFilePath.startsWith(m[2])
-                ), "NV: Negation violated.")
+                ), "ERR_NV: Negation violated.")
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
     baseDirectory = path.dirname(filePath)
@@ -237,7 +237,7 @@ try
 catch ex
     console.error("Error: " + ex.message)
     process.exit(
-        if ex.message.startsWith("NV: ")
+        if ex.message.startsWith("ERR_NV: ")
             64
         else
             1
