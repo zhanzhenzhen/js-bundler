@@ -215,7 +215,7 @@ try
             informative = true
             i++
         else if arg == "-n"
-            negation = args[i + 1].match(/((?:\*\/)?)([^*]+)(\*?)/)
+            negation = args[i + 1].match(/^((?:\*\/)?)([^*]+)(\*?)$/)
             assert(negation != null)
             negations.push(negation)
             i += 2
