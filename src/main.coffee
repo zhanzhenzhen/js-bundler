@@ -209,8 +209,9 @@ try
             informative = true
             i++
         else if arg == "-n"
-            negations = args[i + 1].match(/((?:\*\/)?)([^*]+)(\*?)/)
-            assert(negations != null)
+            negation = args[i + 1].match(/((?:\*\/)?)([^*]+)(\*?)/)
+            assert(negation != null)
+            negations.push(negation)
             i += 2
         else if arg in ["--version", "-v"]
             console.log(packageInfo.version)
