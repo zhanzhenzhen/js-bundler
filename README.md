@@ -7,7 +7,7 @@ Because it doesn't provide shims, please only bundle "browser" or "neutral" pack
 # Synopsis
 
 ```
-bundle [-c:<file-type> <command>]... [-d <require-string>]... [-i] <file>
+bundle [-c:<file-type> <command>]... [-d <require-string>]... [-n <negate-pattern>]... [-i] <file>
 bundle (-v | --version)
 ```
 
@@ -64,6 +64,27 @@ bundle -i example.js
 ```
 
 This is useful in debugging. But for security, we recommend you use this option only for testing, or use a minifier to remove JavaScript comments in its downloadable version, because this option discloses the relative paths.
+
+`-n` is to make sure there're no file or directory matching the pattern in the bundle. Useful for security purposes. For example:
+
+```bash
+bundle -n */server.* example.js
+```
+
+If the file `example.js` contains `require("./server.main")` and there's a file `server.main.js`, then it will result in an error so that it won't build a bundle containing the sensitive server-side file, which is often a mistake. You can correct your code and bundle again.
+
+Supported patterns:
+
+- `<segment>`
+- `<segment>*`
+- `*/<segment>`
+- `*/<segment>*`
+
+`<segment>` can contain `"/"` but can't contain `"*"`.
+
+If a directory matches the pattern, then it will also affect all its files and subdirectories, recursively.
+
+The patterns only affect `require` strings that begin with `"./"`, `"../"` or `"/"`. The pattern `foo*` means the actual relative path (not the require string) begins with `foo`. The pattern `foo.js` means the actual relative path is `foo.js`.
 
 To print the version:
 

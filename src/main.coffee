@@ -5,18 +5,40 @@ esprima = require("esprima")
 resolve = require("browser-resolve")
 
 fs = require("fs")
-path = require("path")
+path = require("path").posix # uniformly use Unix style path
 cprocess = require("child_process")
 assert = require("assert")
 packageInfo = require("../package.json")
+
+# Convert Windows path to Unix style.
+slashPath = (p) ->
+    if typeof p == "string"
+        p.replace(/\\/g, "/")
+    else
+        p
+
+processCwd = slashPath(process.cwd())
 
 mods = []
 filePathIndexesInMods = {}
 compileCommands = {}
 dummies = []
+negations = []
 informative = false
 checkCode = (filePath, isDummy = false) ->
     assert(filePath.indexOf("\"") == -1, "File path can't contain `\"`.")
+    relativeFilePath = path.relative(processCwd, filePath)
+    negations.forEach (m) ->
+        if m[1] == ""
+            if m[3] == ""
+                assert(relativeFilePath == m[2], "Negation violated.")
+            else
+                assert(relativeFilePath.startsWith(m[2]), "Negation violated.")
+        else
+            if m[3] == ""
+                assert(relativeFilePath.endsWith("/" + m[2]), "Negation violated.")
+            else
+                assert(relativeFilePath.includes("/" + m[2]), "Negation violated.")
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
     baseDirectory = path.dirname(filePath)
@@ -79,10 +101,10 @@ checkCode = (filePath, isDummy = false) ->
             requireString = node.arguments[0].value
             newFilePath =
                 try
-                    resolve.sync(requireString, {
+                    slashPath(resolve.sync(requireString, {
                         basedir: baseDirectory
                         extensions: [".js", ".json", ".coffee"]
-                    })
+                    }))
                 catch # when `require` an inexistent module
                     null
 
@@ -103,7 +125,7 @@ checkCode = (filePath, isDummy = false) ->
 # "674497323404793172" is to avoid naming conflicts.
 writeOutput = ->
     modsBodyStr = mods.map((mod) ->
-        info = if informative then path.relative(process.cwd(), mod.rawFilePath) + " " else ""
+        info = if informative then path.relative(processCwd, mod.rawFilePath) + " " else ""
         """
             {\
             fun: function(exports, module, require) {
@@ -185,6 +207,10 @@ while i < args.length
     else if arg == "-i"
         informative = true
         i++
+    else if arg == "-n"
+        negations = args[i + 1].match(/(\*\/?)([^*]+)(\*?)/)
+        assert(negations != null)
+        i += 2
     else if arg in ["--version", "-v"]
         console.log(packageInfo.version)
         doesBundle = false
@@ -195,5 +221,5 @@ while i < args.length
         i++
 if (doesBundle)
     assert(file?, "Must specify a file.")
-    checkCode(path.resolve(file))
+    checkCode(slashPath(path.resolve(file)))
     writeOutput()
