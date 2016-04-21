@@ -16,7 +16,7 @@
         "browser-resolve": "1.11.1"
     },
     "engines": {
-        "node": ">=0.12.0"
+        "node": ">=4.0.0"
     },
     "bin": {
         "bundle": "./bin/bundle"
