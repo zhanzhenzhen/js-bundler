@@ -190,36 +190,40 @@ writeOutput = ->
     """
     process.stdout.write(bundleStr)
 
-args = process.argv[..]
-args.splice(0, 2) # strip "node" and the name of this file
-file = null
-doesBundle = true
-i = 0
-while i < args.length
-    arg = args[i]
-    if arg.indexOf("-c:") != -1
-        compileCommands[arg.split(":")[1]] = args[i + 1]
-        i += 2
-    else if arg == "-d"
-        assert(args[i + 1].search(/^(\/|\.\/|\.\.\/)/) == -1)
-        dummies.push(args[i + 1])
-        i += 2
-    else if arg == "-i"
-        informative = true
-        i++
-    else if arg == "-n"
-        negations = args[i + 1].match(/(\*\/?)([^*]+)(\*?)/)
-        assert(negations != null)
-        i += 2
-    else if arg in ["--version", "-v"]
-        console.log(packageInfo.version)
-        doesBundle = false
-        i++
-    else
-        assert(arg[0] != "-", "Invalid argument.")
-        file = arg
-        i++
-if (doesBundle)
-    assert(file?, "Must specify a file.")
-    checkCode(slashPath(path.resolve(file)))
-    writeOutput()
+try
+    args = process.argv[..]
+    args.splice(0, 2) # strip "node" and the name of this file
+    file = null
+    doesBundle = true
+    i = 0
+    while i < args.length
+        arg = args[i]
+        if arg.indexOf("-c:") != -1
+            compileCommands[arg.split(":")[1]] = args[i + 1]
+            i += 2
+        else if arg == "-d"
+            assert(args[i + 1].search(/^(\/|\.\/|\.\.\/)/) == -1)
+            dummies.push(args[i + 1])
+            i += 2
+        else if arg == "-i"
+            informative = true
+            i++
+        else if arg == "-n"
+            negations = args[i + 1].match(/((\*\/)?)([^*]+)(\*?)/)
+            assert(negations != null)
+            i += 2
+        else if arg in ["--version", "-v"]
+            console.log(packageInfo.version)
+            doesBundle = false
+            i++
+        else
+            assert(arg[0] != "-", "Invalid argument.")
+            file = arg
+            i++
+    if (doesBundle)
+        assert(file?, "Must specify a file.")
+        checkCode(slashPath(path.resolve(file)))
+        writeOutput()
+catch ex
+    console.error("Error: " + ex.message)
+    process.exit(1)
