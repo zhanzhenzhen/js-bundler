@@ -68,7 +68,7 @@ This is useful in debugging. But for security, we recommend you use this option 
 `-n` is to make sure there're no file or directory matching the pattern in the bundle. Useful for security purposes. For example:
 
 ```bash
-bundle -n */server.* example.js
+bundle -n '*/server.*' example.js
 ```
 
 If the file `example.js` contains `require("./server.main")` and there's a file `server.main.js`, then it will result in an error so that it won't build a bundle containing the sensitive server-side file, which is often a mistake. You can correct your code and bundle again.
@@ -85,6 +85,8 @@ Supported patterns:
 If a directory matches the pattern, then it will also affect all its files and subdirectories, recursively.
 
 The patterns only affect `require` strings that begin with `"./"`, `"../"` or `"/"`. The pattern `foo*` means the actual relative path (not the require string) begins with `foo`. The pattern `foo.js` means the actual relative path is `foo.js`. Note: Relative path `foo.js` matches pattern `*/foo.js` because the path can be treated as `"./foo.js"`.
+
+Also note: If your pattern contains `*`, then it must be enclosed with single or double quotes, otherwise it won't be sent to the program correctly.
 
 To print the version:
 
