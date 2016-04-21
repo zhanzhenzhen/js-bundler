@@ -88,6 +88,8 @@ The patterns only affect `require` strings that begin with `"./"`, `"../"` or `"
 
 Also note: If your pattern contains `*`, then it must be enclosed with single or double quotes, otherwise it won't be sent to the program correctly.
 
+For negation error the process exits with exit code 64. For other error the exit code is 1.
+
 To print the version:
 
 ```bash
