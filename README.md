@@ -84,7 +84,7 @@ Supported patterns:
 
 If a directory matches the pattern, then it will also affect all its files and subdirectories, recursively.
 
-The patterns only affect `require` strings that begin with `"./"`, `"../"` or `"/"`. The pattern `foo*` means the actual relative path (not the require string) begins with `foo`. The pattern `foo.js` means the actual relative path is `foo.js`.
+The patterns only affect `require` strings that begin with `"./"`, `"../"` or `"/"`. The pattern `foo*` means the actual relative path (not the require string) begins with `foo`. The pattern `foo.js` means the actual relative path is `foo.js`. Note: Relative path `foo.js` matches pattern `*/foo.js` because the path can be treated as `"./foo.js"`.
 
 To print the version:
 
