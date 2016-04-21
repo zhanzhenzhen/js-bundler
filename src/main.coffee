@@ -209,7 +209,7 @@ try
             informative = true
             i++
         else if arg == "-n"
-            negations = args[i + 1].match(/((\*\/)?)([^*]+)(\*?)/)
+            negations = args[i + 1].match(/((?:\*\/)?)([^*]+)(\*?)/)
             assert(negations != null)
             i += 2
         else if arg in ["--version", "-v"]
