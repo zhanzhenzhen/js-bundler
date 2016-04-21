@@ -31,14 +31,14 @@ checkCode = (filePath, isDummy = false) ->
     negations.forEach (m) ->
         if m[1] == ""
             if m[3] == ""
-                assert(relativeFilePath == m[2], "Negation violated.")
+                assert(relativeFilePath != m[2], "Negation violated.")
             else
-                assert(relativeFilePath.startsWith(m[2]), "Negation violated.")
+                assert(not relativeFilePath.startsWith(m[2]), "Negation violated.")
         else
             if m[3] == ""
-                assert(relativeFilePath.endsWith("/" + m[2]), "Negation violated.")
+                assert(not relativeFilePath.endsWith("/" + m[2]), "Negation violated.")
             else
-                assert(relativeFilePath.includes("/" + m[2]), "Negation violated.")
+                assert(not relativeFilePath.includes("/" + m[2]), "Negation violated.")
     rawCodeType = path.extname(filePath).substr(1) # strip the leading "."
     rawCode = fs.readFileSync(filePath, {encoding: "utf8"})
     baseDirectory = path.dirname(filePath)
