@@ -1,3 +1,7 @@
+# 2016-04-22 v1.2.1
+
+Fix a bug that `node_modules` isn't exempt from negation.
+
 # 2016-04-22 v1.2.0
 
 Support negation.
