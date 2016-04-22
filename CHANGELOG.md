@@ -1,3 +1,7 @@
+# 2016-04-22 v1.2.0
+
+Support negation.
+
 # 2016-03-26 v1.1.2
 
 Remove the workaround so that it has no side-effects on Windows. CoffeeScript now fixed that bug in their master branch.
