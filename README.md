@@ -84,7 +84,7 @@ Supported patterns:
 
 If a directory matches the pattern, then it will also affect all its files and subdirectories, recursively.
 
-The patterns only affect `require` strings that begin with `"./"`, `"../"` or `"/"`. The pattern `foo*` means the actual relative path (not the require string) begins with `foo`. The pattern `foo.js` means the actual relative path is `foo.js`. Note: Relative path `foo.js` matches pattern `*/foo.js` because the path can be treated as `"./foo.js"`.
+The patterns don't affect external files (namely, the files under `node_modules`). The pattern `foo*` means the actual relative path (not the require string) begins with `foo`. The pattern `foo.js` means the actual relative path is `foo.js`. Note: Relative path `foo.js` matches pattern `*/foo.js` because the path can be treated as `"./foo.js"`.
 
 Also note: If your pattern contains `*`, then it must be enclosed with single or double quotes, otherwise it won't be sent to the program correctly.
 
