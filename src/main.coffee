@@ -31,14 +31,19 @@ checkCode = (filePath, isDummy = false) ->
     negations.forEach (m) ->
         if m[1] == ""
             if m[3] == ""
-                assert(relativeFilePath != m[2], "ERR_NV: Negation violated.")
+                assert(not (
+                    relativeFilePath == m[2] or
+                    relativeFilePath.startsWith(m[2] + "/")
+                ), "ERR_NV: Negation violated.")
             else
                 assert(not relativeFilePath.startsWith(m[2]), "ERR_NV: Negation violated.")
         else
             if m[3] == ""
                 assert(not (
                     relativeFilePath.endsWith("/" + m[2]) or
-                    relativeFilePath == m[2]
+                    relativeFilePath == m[2] or
+                    relativeFilePath.includes("/" + m[2] + "/") or
+                    relativeFilePath.startsWith(m[2] + "/")
                 ), "ERR_NV: Negation violated.")
             else
                 assert(not (
@@ -218,8 +223,11 @@ try
             informative = true
             i++
         else if arg == "-n"
-            negation = args[i + 1].match(/^((?:\*\/)?)([^*]+)(\*?)$/)
-            assert(negation != null, "Invalid negation pattern.")
+            negation = slashPath(args[i + 1]).match(/^((?:\*\/)?)([^*]+)(\*?)$/)
+            assert(
+                negation != null and not negation[2].startsWith("/") and not negation[2].endsWith("/"),
+                "Invalid negation pattern."
+            )
             negations.push(negation)
             i += 2
         else if arg in ["--version", "-v"]

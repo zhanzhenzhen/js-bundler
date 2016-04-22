@@ -80,7 +80,7 @@ Supported patterns:
 - `*/<segment>`
 - `*/<segment>*`
 
-`<segment>` can contain `"/"` but can't contain `"*"`.
+`<segment>` can contain `"/"` (not trailing or leading) but can't contain `"*"`.
 
 If a directory matches the pattern, then it will also affect all its files and subdirectories, recursively.
 
