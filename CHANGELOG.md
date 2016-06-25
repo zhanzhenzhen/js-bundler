@@ -1,3 +1,7 @@
+# 2016-06-25 v1.2.3
+
+Use npm 3.10.2 to publish, which may have solved a publishing bug.
+
 # 2016-06-25 v1.2.2
 
 Reflect `browser-resolve` update of a bug fix for Node.js 6.
