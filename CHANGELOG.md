@@ -1,3 +1,7 @@
+# 2016-06-25 v1.2.2
+
+Reflect `browser-resolve` update of a bug fix for Node.js 6.
+
 # 2016-04-22 v1.2.1
 
 Fix a bug that `node_modules` isn't exempt from negation.
