@@ -1,3 +1,7 @@
+# 2018-11-18 v1.2.4
+
+Use acorn instead of esprima for the newest ECMAScript support.
+
 # 2016-06-25 v1.2.3
 
 Use npm 3.10.2 to publish, which may have solved a publishing bug.
