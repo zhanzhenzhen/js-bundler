@@ -1,4 +1,4 @@
-esprima = require("esprima")
+acorn = require("acorn")
 
 # All (or nearly all) options in "resolve" package are valid
 # in package "browser-resolve", though some are missing in browser-resolve's readme.
@@ -97,7 +97,7 @@ checkCode = (filePath, isDummy = false) ->
     # than this.
     parsed =
         try
-            esprima.parse("""
+            acorn.parse("""
                 (function(exports, module, require) {
                 #{code}
                 })();

@@ -12,7 +12,7 @@
     },
     "dependencies": {
         "coffee-script": "1.9.3",
-        "esprima": "2.x",
+        "acorn": "6.x",
         "browser-resolve": "1.x"
     },
     "engines": {
