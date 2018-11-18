@@ -1,4 +1,6 @@
 acorn = require("acorn")
+acornStage3 = require("acorn-stage3")
+AcornParser = acorn.Parser.extend(acornStage3)
 
 # All (or nearly all) options in "resolve" package are valid
 # in package "browser-resolve", though some are missing in browser-resolve's readme.
@@ -97,11 +99,11 @@ checkCode = (filePath, isDummy = false) ->
     # than this.
     parsed =
         try
-            acorn.parse("""
+            AcornParser.parse("""
                 (function(exports, module, require) {
                 #{code}
                 })();
-            """)
+            """, {ecmaVersion: 10})
         catch
             throw new Error("Syntax error in \"#{filePath}\".")
 

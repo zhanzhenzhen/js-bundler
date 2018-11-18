@@ -13,6 +13,7 @@
     "dependencies": {
         "coffee-script": "1.9.3",
         "acorn": "6.x",
+        "acorn-stage3": "1.x",
         "browser-resolve": "1.x"
     },
     "engines": {
